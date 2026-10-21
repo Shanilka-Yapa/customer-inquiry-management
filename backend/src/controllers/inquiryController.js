@@ -12,6 +12,15 @@ const createInquiry = async (req, res) => {
         description,
         createdById: req.user.id,
       },
+      include: {
+        createdBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     });
 
     return res.status(201).json({
@@ -31,9 +40,7 @@ const getInquiries = async (req, res) => {
   try {
     const { status, search } = req.query;
 
-    const where = {
-      createdById: req.user.id,
-    };
+    const where = {};
 
     if (status) {
       const allowedStatuses = ["NEW", "IN_PROGRESS", "RESOLVED"];
@@ -51,11 +58,26 @@ const getInquiries = async (req, res) => {
       where.OR = [
         { customerName: { contains: search, mode: "insensitive" } },
         { subject: { contains: search, mode: "insensitive" } },
+        { contact: { contains: search, mode: "insensitive" } },
+        {
+          createdBy: {
+            name: { contains: search, mode: "insensitive" },
+          },
+        },
       ];
     }
 
     const inquiries = await prisma.inquiry.findMany({
       where,
+      include: {
+        createdBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
       orderBy: { updatedAt: "desc" },
     });
 
@@ -79,10 +101,16 @@ const getInquiryById = async (req, res) => {
       });
     }
 
-    const inquiry = await prisma.inquiry.findFirst({
-      where: {
-        id,
-        createdById: req.user.id,
+    const inquiry = await prisma.inquiry.findUnique({
+      where: { id },
+      include: {
+        createdBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
     });
 
@@ -113,12 +141,16 @@ const updateInquiryStatus = async (req, res) => {
     }
 
     const { status } = req.body;
+    const allowedStatuses = ["NEW", "IN_PROGRESS", "RESOLVED"];
 
-    const existingInquiry = await prisma.inquiry.findFirst({
-      where: {
-        id,
-        createdById: req.user.id,
-      },
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        message: "Invalid inquiry status",
+      });
+    }
+
+    const existingInquiry = await prisma.inquiry.findUnique({
+      where: { id },
     });
 
     if (!existingInquiry) {
@@ -128,15 +160,37 @@ const updateInquiryStatus = async (req, res) => {
     }
 
     if (existingInquiry.status === status) {
+      const inquiry = await prisma.inquiry.findUnique({
+        where: { id },
+        include: {
+          createdBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
       return res.status(200).json({
         message: "Inquiry status is unchanged",
-        inquiry: existingInquiry,
+        inquiry,
       });
     }
 
     const inquiry = await prisma.inquiry.update({
       where: { id },
       data: { status },
+      include: {
+        createdBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     });
 
     return res.status(200).json({
