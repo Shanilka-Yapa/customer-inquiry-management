@@ -347,13 +347,29 @@ export default function InquiryDetails() {
 
         {/* Status update */}
         <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <div className="mb-6">
-            <h3 className="text-lg font-bold text-slate-900">
-              Manage Inquiry Status
-            </h3>
-            <p className="mt-1 text-sm text-slate-500">
-              Update the current status to reflect the inquiry's progress.
-            </p>
+          <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+            <div>
+              <h3 className="text-lg font-bold text-slate-900">
+                Manage Inquiry Status
+              </h3>
+
+              <p className="mt-1 text-sm text-slate-500">
+                Update the current status to reflect the inquiry's progress.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setSuccess("");
+                fetchInquiry();
+              }}
+              disabled={saving}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
+            >
+              <RefreshCw size={16} />
+              Refresh
+            </button>
           </div>
 
           <form

@@ -163,7 +163,7 @@ export default function CreateInquiry() {
                   onChange={handleChange}
                   placeholder="Email address or phone number"
                   required
-                  maxLength={254}
+                  maxLength={100}
                   className="w-full rounded-xl border border-slate-200 py-3.5 pl-11 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10"
                 />
               </div>
@@ -191,7 +191,7 @@ export default function CreateInquiry() {
                   onChange={handleChange}
                   placeholder="Briefly describe the issue"
                   required
-                  maxLength={200}
+                  maxLength={150}
                   className="w-full rounded-xl border border-slate-200 py-3.5 pl-11 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10"
                 />
               </div>
@@ -219,6 +219,7 @@ export default function CreateInquiry() {
                   placeholder="Provide details about the customer's inquiry..."
                   required
                   rows={5}
+                  maxlength={2000}
                   className="w-full resize-y rounded-xl border border-slate-200 py-3.5 pl-11 pr-4 text-sm leading-6 outline-none transition placeholder:text-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10"
                 />
               </div>
